@@ -3,11 +3,13 @@ const unsigned char BLOCK = 254; //Ascii code for a block
 const unsigned char FREE = 0;    //Ascii code for null
 const int BOARDWIDTH = 12;       //Board width
 const int BOARDHEIGHT = 21;      //Board height
-const int STARTX = 5;            //Start x position for pieces
+const int STARTX = 2;            //Start x position for pieces
 const int STARTY = 0;            //Start y position for pieces
 
-//Creating the Board
-unsigned char board[21][12] =
+//Creating the Boards
+unsigned char gameBoard[BOARDHEIGHT][BOARDWIDTH]; //For drawing with a temp piece
+unsigned char savedBoard[BOARDHEIGHT][BOARDWIDTH]; //For collided blocks
+unsigned char initBoard[BOARDHEIGHT][BOARDWIDTH] =
 {
 	{ BLOCK, FREE, FREE, FREE, FREE, FREE, FREE, FREE, FREE, FREE, FREE, BLOCK },
 	{ BLOCK, FREE, FREE, FREE, FREE, FREE, FREE, FREE, FREE, FREE, FREE, BLOCK },
