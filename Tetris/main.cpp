@@ -113,7 +113,32 @@ void updateGameBoard()
 //Returns true if current piece has hit the bottom
 bool checkForBottom()
 {
-	return false;
+	//Int for checking
+	int bottomLine = 0;
+
+	//Check through piece array and find the bottom most block
+	for (int y = 0; y < 5; y++)
+	{
+		for (int x = 0; x < 5; x++)
+		{
+			//If there is a block on this line
+			if (pieces[curType][curRot][x][y] == BLOCK)
+			{
+				//Update bottomLine
+				bottomLine = y;
+			}
+		}
+	}
+
+	//Check if piece has dropped below board
+	if (curPosY + bottomLine >= BOARDHEIGHT - 1)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 //Returns true if current piece has collided with a placed block
@@ -196,20 +221,41 @@ void checkForInput()
 	}
 }
 
-//Main Method
-int main()
+//Saves game array to saved array
+void gameToSaved()
 {
-	//Boolean for game over
-	bool gameOver = false;
+	for (int y = 0; y < BOARDHEIGHT; y++)
+	{
+		for (int x = 0; x < BOARDWIDTH; x++)
+		{
+			//Build saved board
+			savedBoard[y][x] = gameBoard[y][x];
+		}
+	}
+}
 
+//Resets piece position and gets a new piece
+void resetPiece()
+{
 	//Initialise random seed
 	srand(time(NULL));
 
 	//Randomise First Piece
 	curType = rand() % 7;
 	curRot = rand() % 4;
+
+	//Reset Position
 	curPosX = STARTX;
 	curPosY = STARTY;
+}
+
+//Main Method
+int main()
+{
+	//Boolean for game over
+	bool gameOver = false;
+
+	resetPiece();
 
 	//Save initial Board to saved board
 	for (int y = 0; y < BOARDHEIGHT; y++)
@@ -261,6 +307,10 @@ int main()
 				curPosY = oldPosY;
 
 				//Save game array to saved array
+				gameToSaved();
+
+				//Reset block position, get new block
+				resetPiece();
 			}
 			//If current block is about to collide with the side
 			if (checkForSide())
