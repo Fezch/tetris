@@ -15,6 +15,11 @@ int curType; //Current Type of Piece
 int curRot; //Current Rotation of Piece
 int curPosX; //Current X Position of Piece
 int curPosY; //Current Y Position of Piece
+int oldPosX; //Old X Position of Piece
+int oldPosY; //Old Y Position of Piece
+bool lockKeyL = false; //Left Key Lock
+bool lockKeyR = false; //Right Key Lock
+bool lockKeyD = false; //Down Key Lock
 
 //Get Board
 string getBoard()
@@ -96,8 +101,98 @@ void updateGameBoard()
 	{
 		for (int y = 0; y < 5; y++)
 		{
-			gameBoard[y + curPosY][x + curPosX] = pieces[curType][curRot][x][y];
+			//Only copy BLOCKs
+			if (pieces[curType][curRot][x][y] == BLOCK)
+			{
+				gameBoard[y + curPosY][x + curPosX] = pieces[curType][curRot][x][y];
+			}
 		}
+	}
+}
+
+//Returns true if current piece has hit the bottom
+bool checkForBottom()
+{
+	return false;
+}
+
+//Returns true if current piece has collided with a placed block
+bool checkForBlock()
+{
+	return false;
+}
+
+//Returns true if current piece has gone off the side
+bool checkForSide()
+{
+	return false;
+}
+
+//Refreshes Screen
+void refreshScreen()
+{
+	//Update game board
+	updateGameBoard();
+
+	//Clear screen
+	system("CLS");
+
+	//Draw gameboard
+	drawGame();
+}
+
+//Checks for keyboard input
+void checkForInput()
+{
+	//If Left key has been pushed
+	if (GetAsyncKeyState(VK_LEFT))
+	{
+		//If key has not been locked
+		if (!lockKeyL)
+		{
+			curPosX--;
+			lockKeyL = true;
+			refreshScreen();
+		}
+	}
+	else //Key had already been locked
+	{
+		//Reset lock
+		lockKeyL = false;
+	}
+
+	//If Right key has been pushed
+	if (GetAsyncKeyState(VK_RIGHT))
+	{
+		//If key has not been locked
+		if (!lockKeyR)
+		{
+			curPosX++;
+			lockKeyR = true;
+			refreshScreen();
+		}
+	}
+	else //Key had already been locked
+	{
+		//Reset lock
+		lockKeyR = false;
+	}
+
+	//If Down key is pushed
+	if (GetAsyncKeyState(VK_DOWN))
+	{
+		//If key has not been locked
+		if (!lockKeyD)
+		{
+			curPosY++;
+			lockKeyD = true;
+			refreshScreen();
+		}
+	}
+	else //Key had already been locked
+	{
+		//Reset lock
+		lockKeyD = false;
 	}
 }
 
@@ -133,20 +228,52 @@ int main()
 	//Main loop
 	while (!gameOver)
 	{
+		//Check for Input
+		checkForInput();
+
 		//Save current time
 		timerCurrent = (clock() / CLOCKS_PER_SEC);
 
 		//Check if screen needs refreshed
 		if (timerCurrent > timerStart + 0.5)
 		{
-			//Update game board
-			updateGameBoard();
+			//Save old position
+			oldPosX = curPosX;
+			oldPosY = curPosY;
 
-			//Clear screen
-			system("CLS");
+			//Move piece down
+			curPosY++;
 
-			//Draw gameboard
-			drawGame();
+			//If current block is about to collide with another block
+			if (checkForBlock())
+			{
+				//Move block back to old position
+				curPosX = oldPosX;
+				curPosY = oldPosY;
+
+				//Save game array to saved array
+			}
+			//If current block is about to collide with the bottom
+			if (checkForBottom())
+			{
+				//Move block back to old position
+				curPosX = oldPosX;
+				curPosY = oldPosY;
+
+				//Save game array to saved array
+			}
+			//If current block is about to collide with the side
+			if (checkForSide())
+			{
+				//Find out which side
+				//Move block in opposite direction
+				//DO not save game array to saved array
+			}
+			//Check for collisions, if true then move piece up, save gameboard to saved board, get new peice
+			//Else just draw gameboard
+
+			//Resfresh Screen
+			refreshScreen();
 
 			//Reset timerCurrent
 			timerStart = (clock() / CLOCKS_PER_SEC);
