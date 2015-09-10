@@ -20,6 +20,8 @@ int oldPosY; //Old Y Position of Piece
 bool lockKeyL = false; //Left Key Lock
 bool lockKeyR = false; //Right Key Lock
 bool lockKeyD = false; //Down Key Lock
+bool lockKeyZ = false; //Z Key Lock
+bool lockKeyX = false; //X Key Lock
 
 //Get Board
 string getBoard()
@@ -218,6 +220,40 @@ void checkForInput()
 	{
 		//Reset lock
 		lockKeyD = false;
+	}
+
+	//If Z key is pushed
+	if (GetAsyncKeyState(0x5A))
+	{
+		//If key has not been locked
+		if (!lockKeyZ)
+		{
+			curRot = (curRot + 1) % 4; //Update rotation
+			lockKeyZ = true;
+			refreshScreen();
+		}
+	}
+	else //Key had already been locked
+	{
+		//Reset lock
+		lockKeyZ = false;
+	}
+
+	//If X key is pushed
+	if (GetAsyncKeyState(0x58))
+	{
+		//If key has not been locked
+		if (!lockKeyX)
+		{
+			curRot = (curRot - 1) % 4; //Update rotation
+			lockKeyX = true;
+			refreshScreen();
+		}
+	}
+	else //Key had already been locked
+	{
+		//Reset lock
+		lockKeyX = false;
 	}
 }
 
